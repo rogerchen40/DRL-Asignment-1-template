@@ -3,36 +3,29 @@ name: Evaluate Student Agent
 on:
   pull_request:
     branches: [ main ]
-  repository_dispatch:
-    types: [run-evaluation]
   workflow_dispatch:
 
 jobs:
   evaluate:
     runs-on: ubuntu-latest
     steps:
-      - name: 1. Checkout Student Repository
-        uses: actions/checkout@v3  
+      - name: 1. Checkout Main Repository (你的 Repo)
+        uses: actions/checkout@v3
+        with:
+          ref: main  # **確保 Actions 在 main 分支執行，這樣可以下載 eval.py**
 
-      - name: 2. Trigger Evaluation on Main Repository
-        if: github.event_name == 'pull_request'
-        env:
-          PAT: ${{ secrets.PAT_TOKEN }}
+      - name: 2. Fetch Student PR Code
         run: |
-          curl -X POST -H "Authorization: Bearer $PAT" \
-               -H "Accept: application/vnd.github.v3+json" \
-               https://api.github.com/repos/YOUR_USERNAME/RL-HW1-Template/dispatches \
-               -d '{"event_type": "run-evaluation"}'
-
+          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-test
+          git checkout pr-test  # **切換到學生的 PR 內容**
 
       - name: 3. Download eval.py from Private Repo
-        if: github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch'
         run: |
           curl -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
                -H "Accept: application/vnd.github.v3.raw" \
                -o eval.py \
                "${{ secrets.EVAL_REPO }}"
-          cat eval.py  # 顯示 eval.py 內容，確認是否下載成功
+          cat eval.py  # **確認 eval.py 下載成功**
 
       - name: 4. Set Up Python
         uses: actions/setup-python@v4
