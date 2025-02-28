@@ -20,6 +20,7 @@ jobs:
                -H "Accept: application/vnd.github.v3.raw" \
                -o eval.py \
                "${{ secrets.EVAL_REPO }}"
+          cat eval.py  # 顯示 eval.py 內容，確認是否下載成功
 
       - name: 3. Set Up Python
         uses: actions/setup-python@v4
