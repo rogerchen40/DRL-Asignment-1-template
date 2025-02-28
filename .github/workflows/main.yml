@@ -16,7 +16,7 @@ jobs:
 
       - name: 2. Download eval.py from Private Repo
         run: |
-          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+          curl -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
                -H "Accept: application/vnd.github.v3.raw" \
                -o eval.py \
                "${{ secrets.EVAL_REPO }}"
