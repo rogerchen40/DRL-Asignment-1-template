@@ -28,7 +28,10 @@ jobs:
           python-version: 3.8
 
       - name: 4. Install Dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install gym
+          pip install -r requirements.txt
+        
 
       - name: 5. Run Evaluation
         run: python eval.py --token ${{ secrets.SUBMIT_TOKEN }}
