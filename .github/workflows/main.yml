@@ -12,12 +12,13 @@ jobs:
       - name: 1. Checkout Main Repository (你的 Repo)
         uses: actions/checkout@v3
         with:
-          ref: main  # **確保 Actions 在 main 分支執行，這樣可以下載 eval.py**
+          ref: main  # **手動切回 RL-HW1-Template/main，確保 Secrets 可用**
 
       - name: 2. Fetch Student PR Code
         run: |
           git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-test
-          git checkout pr-test  # **切換到學生的 PR 內容**
+          git checkout pr-test  # **切換到學生 PR 內容**
+          ls -al  # **確認 student_agent.py 存在**
 
       - name: 3. Download eval.py from Private Repo
         run: |
