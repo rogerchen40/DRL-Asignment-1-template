@@ -14,12 +14,12 @@ jobs:
       - name: 1. Checkout Student Repository
         uses: actions/checkout@v3  
 
-      - name: 2. Download eval.py (Hidden)
+      - name: 2. Download eval.py from Private Repo
         run: |
-          curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-          -H "Accept: application/vnd.github.v3.raw" \
-          -o eval.py \
-          "${{ secrets.EVAL_REPO }}"
+          curl -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3.raw" \
+               -o eval.py \
+               "${{ secrets.EVAL_REPO }}"
 
       - name: 3. Set Up Python
         uses: actions/setup-python@v4
