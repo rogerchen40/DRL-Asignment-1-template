@@ -1,42 +1,35 @@
-name: Evaluate Student Agent
+name: Python Application Test
 
 on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
-  evaluate:
+  build:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: [3.8]
+
     steps:
-      - name: 1. Checkout Main Repository (你的 Repo)
-        uses: actions/checkout@v3
-        with:
-          ref: main  # **手動切回 RL-HW1-Template/main，確保 Secrets 可用**
+    - uses: actions/checkout@v3
 
-      - name: 2. Fetch Student PR Code
-        run: |
-          git fetch origin pull/${{ github.event.pull_request.number }}/head:pr-test
-          git checkout pr-test  # **切換到學生 PR 內容**
-          ls -al  # **確認 student_agent.py 存在**
+    - name: 1. Creating virtual env
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
 
-      - name: 3. Download eval.py from Private Repo
-        run: |
-          curl -H "Authorization: Bearer ${{ secrets.PAT_TOKEN }}" \
-               -H "Accept: application/vnd.github.v3.raw" \
-               -o eval.py \
-               "${{ secrets.EVAL_REPO }}"
-          cat eval.py  # **確認 eval.py 下載成功**
+    - name: 2. Installing dependencies
+      run: |
+        pip install gym
+        pip install -r requirements.txt
 
-      - name: 4. Set Up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.8
+    - name: 3. Grant execution permission to eval.bin
+      run: chmod +x eval.bin  # 確保 eval.bin 可以執行
 
-      - name: 5. Install Dependencies
-        run: |
-          pip install gym
-          pip install -r requirements.txt
-
-      - name: 6. Run Evaluation
-        run: python eval.py --token ${{ secrets.SUBMIT_TOKEN }}
+    - name: 4. Running your code
+      run: ./eval.bin --token a91aae52cff9ef65932db06b150ffd47  # 執行 eval.bin
